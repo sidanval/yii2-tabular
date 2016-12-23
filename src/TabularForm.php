@@ -46,6 +46,9 @@ class TabularForm extends Model
     protected $models;
 
     /** @var  \Closure */
+    public $modelsGetter;
+
+    /** @var  \Closure */
     public $deleteCallback;
 
     /** @var  \Closure */
@@ -66,13 +69,15 @@ class TabularForm extends Model
     {
         $relation = $this->rootModel->getRelation($this->rootModelAttribute);
         $relationCLass = $relation->modelClass;
+        $templateModel = new $relationCLass();
+        $templateModelPk = reset($templateModel->primaryKey());
 
         if($this->withRoot) {
             $this->rootModel->load($data, $rootFormName);
         }
 
         if($formName === null) {
-            $formName = (new $relationCLass)->formName();
+            $formName = $templateModel->formName();
         }
 
         if(!isset($data[$formName])) {
@@ -81,8 +86,11 @@ class TabularForm extends Model
 
         $parametersData = $data[$formName];
         $this->models = [];
-        foreach (array_keys($parametersData) as $index) {
+        foreach ($parametersData as $index => $value) {
             $this->models[$index] = new $relationCLass();
+            if(isset($value[$templateModelPk]) && $value[$templateModelPk]) {
+                $this->models[$index] = $templateModel::findOne($value[$templateModelPk]) ?: $this->models[$index];
+            }
         }
         Model::loadMultiple($this->models, Yii::$app->request->post());
 
@@ -197,6 +205,10 @@ class TabularForm extends Model
     public function getModels($current = false)
     {
         if($this->models === null || $current) {
+            if($this->modelsGetter && is_callable($this->modelsGetter)) {
+                return call_user_func($this->modelsGetter, $this->rootModel);
+            }
+
             return $this->rootModel->{$this->rootModelAttribute};
         }
 
