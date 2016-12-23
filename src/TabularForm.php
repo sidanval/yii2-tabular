@@ -39,6 +39,9 @@ class TabularForm extends Model
     /** @var  string */
     public $modelsAttribute;
 
+    /** @var bool  */
+    public $withRoot = false;
+
     /** @var  ActiveRecord[] */
     protected $models;
 
@@ -59,10 +62,14 @@ class TabularForm extends Model
      * @param null $formName
      * @return bool
      */
-    public function load($data, $formName = null)
+    public function load($data, $formName = null, $rootFormName = null)
     {
         $relation = $this->rootModel->getRelation($this->rootModelAttribute);
         $relationCLass = $relation->modelClass;
+
+        if($this->withRoot) {
+            $this->rootModel->load($data, $rootFormName);
+        }
 
         if($formName === null) {
             $formName = (new $relationCLass)->formName();
@@ -89,9 +96,15 @@ class TabularForm extends Model
      */
     public function validate($attributeNames = null, $clearErrors = true)
     {
+        $result = true;
+
+        if($this->withRoot) {
+            $result = $this->rootModel->validate($attributeNames, $clearErrors);
+        }
+
         $this->trigger(self::EVENT_BEFORE_VALIDATE);
 
-        $result = Model::validateMultiple($this->models);
+        $result = $result && Model::validateMultiple($this->models);
 
         $this->trigger(self::EVENT_AFTER_VALIDATE);
 
@@ -109,6 +122,10 @@ class TabularForm extends Model
         }
 
         $transaction = Yii::$app->db->beginTransaction();
+
+        if($this->withRoot) {
+            $this->rootModel->save();
+        }
 
         $this->deleteOldModels();
 

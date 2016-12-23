@@ -27,7 +27,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Sidanval\\Tabular\\": "src/"
+      "sidanval\\tabular\\": "src/"
     }
   }
 }
