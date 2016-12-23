@@ -9,7 +9,10 @@
     "tabular",
     "form"
   ],
-
+  "support": {
+    "issues": "https://github.com/sidanval/yii2-tabular/issues",
+    "source": "https://github.com/sidanval/yii2-tabular"
+  },
   "authors": [
     {
       "name": "Anatoly Sidorov",
@@ -19,7 +22,8 @@
     }
   ],
   "require": {
-    "php": ">=5.4"
+    "php": ">=5.4",
+    "yiisoft/yii2": "^2"
   },
   "autoload": {
     "psr-4": {
