@@ -1,0 +1,29 @@
+{
+  "name":         "sidanval/yii2-tabular",
+  "license":      "MIT",
+  "description":  "Yii2-form for tabular handling forms",
+  "homepage":     "https://github.com/sidanval/yii2-tabular",
+  "type":         "library",
+  "keywords": [
+    "yii2",
+    "tabular",
+    "form"
+  ],
+
+  "authors": [
+    {
+      "name": "Anatoly Sidorov",
+      "email": "stud.prog.lol@yandex.ru",
+      "homepage": "https://github.com/sidanval",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "php": ">=5.4"
+  },
+  "autoload": {
+    "psr-4": {
+      "Sidanval\\Tabular\\": "src/"
+    }
+  }
+}
